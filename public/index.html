@@ -354,7 +354,7 @@
     </div>
 </div>
 
-<!-- Add Student Modal -->
+<!-- Modal додавання студента -->
 <div id="addStudentModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('addStudentModal')">&times;</span>
@@ -394,7 +394,7 @@
     </div>
 </div>
 
-<!-- View Students Modal -->
+<!-- Modal перегляд студентів -->
 <div id="viewStudentsModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('viewStudentsModal')">&times;</span>
@@ -407,7 +407,7 @@
     </div>
 </div>
 
-<!-- Settle Student Modal -->
+<!-- Modal заселення -->
 <div id="settleStudentModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('settleStudentModal')">&times;</span>
@@ -435,7 +435,7 @@
     </div>
 </div>
 
-<!-- Add Payment Modal -->
+<!-- Modal додати платеж -->
 <div id="addPaymentModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('addPaymentModal')">&times;</span>
@@ -470,7 +470,7 @@
     </div>
 </div>
 
-<!-- View Payments Modal -->
+<!-- Modal перегляд платежів -->
 <div id="viewPaymentsModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('viewPaymentsModal')">&times;</span>
@@ -486,7 +486,7 @@
     </div>
 </div>
 
-<!-- View Settlements Modal -->
+<!-- Modal перегляд заселення -->
 <div id="viewSettlementsModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('viewSettlementsModal')">&times;</span>
@@ -496,7 +496,7 @@
     </div>
 </div>
 
-<!-- Delete Student Modal -->
+<!-- Modal видалення студента -->
 <div id="deleteStudentModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('deleteStudentModal')">&times;</span>
@@ -515,7 +515,7 @@
     </div>
 </div>
 
-<!-- Evict Student Modal -->
+<!-- Modal виселення -->
 <div id="evictStudentModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('evictStudentModal')">&times;</span>
@@ -538,7 +538,7 @@
     // API Base URL
     const API_BASE = 'http://localhost:3000/api';
 
-    // Utility functions for API calls
+    // допоміжні функції для викликів API
     async function apiCall(endpoint, options = {}) {
         try {
             const response = await fetch(`${API_BASE}${endpoint}`, {
@@ -561,16 +561,16 @@
         }
     }
 
-    // Modal functions
+    // Modal функції
     async function openModal(modalId) {
         document.getElementById(modalId).style.display = 'block';
 
-        // Populate student dropdowns when opening relevant modals
+        // Modal заповення випадаючіх списків студентів
         if (['settleStudentModal', 'addPaymentModal', 'viewPaymentsModal', 'deleteStudentModal', 'evictStudentModal'].includes(modalId)) {
             await populateStudentDropdowns();
         }
 
-        // Populate available rooms when opening settle student modal
+        // Modal заповенння доступніх кімнат
         if (modalId === 'settleStudentModal') {
             await populateAvailableRooms();
         }
@@ -580,7 +580,7 @@
         document.getElementById(modalId).style.display = 'none';
     }
 
-    // Populate student dropdowns
+    // заповнення списків студентів
     async function populateStudentDropdowns() {
         try {
             const students = await apiCall('/students');
@@ -603,7 +603,7 @@
         }
     }
 
-    // Update statistics
+    // оновлення статистики
     async function updateStats() {
         try {
             const stats = await apiCall('/statistics');
@@ -615,7 +615,7 @@
         }
     }
 
-    // Show success message
+    // успіх(повідомлення) =)
     function showSuccess(message) {
         const alert = document.createElement('div');
         alert.className = 'alert alert-success';
@@ -634,7 +634,7 @@
         }, 3000);
     }
 
-    // Show error message
+    // помилка(повідомлення) =(
     function showError(message) {
         const alert = document.createElement('div');
         alert.className = 'alert alert-error';
@@ -653,7 +653,7 @@
         }, 5000);
     }
 
-    // Add student form handler
+    // обробник форми студента
     document.getElementById('addStudentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -688,7 +688,7 @@
         }
     });
 
-    // View students
+    // перегляд студентів
     async function viewStudents() {
         const container = document.getElementById('studentsTableContainer');
         const loading = document.getElementById('studentsLoading');
@@ -727,7 +727,7 @@
         openModal('viewStudentsModal');
     }
 
-    // Filter students
+    // фільтр пошуку СТУДЕНТ
     function filterStudents() {
         const filter = document.getElementById('studentSearch').value.toLowerCase();
         const rows = document.querySelectorAll('#studentsTableContainer table tbody tr');
@@ -738,7 +738,7 @@
         });
     }
 
-    // Settle student form handler
+    // обробка заселення студентів
     document.getElementById('settleStudentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -770,7 +770,7 @@
         }
     });
 
-    // Add payment form handler
+    // обробка платежів
     document.getElementById('addPaymentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -803,7 +803,7 @@
         }
     });
 
-    // Load student payments
+    // завантаження платежів
     async function loadStudentPayments() {
         const studentId = parseInt(document.getElementById('viewPaymentStudentId').value);
         const container = document.getElementById('paymentsTableContainer');
@@ -906,7 +906,7 @@
         openModal('viewSettlementsModal');
     }
 
-    // Delete student
+    // видалення студента
     async function deleteStudent() {
         const studentId = parseInt(document.getElementById('deleteStudentId').value);
 
@@ -940,7 +940,7 @@
         }
     }
 
-    // Evict student
+    // виселення студента
     async function evictStudent() {
         const studentId = parseInt(document.getElementById('evictStudentId').value);
 
@@ -973,7 +973,7 @@
         }
     }
 
-    // Close modal when clicking outside
+    // modal закриття вікна по кліку(ззовні)
     window.onclick = function(event) {
         const modals = document.getElementsByClassName('modal');
         for (let modal of modals) {
@@ -983,7 +983,7 @@
         }
     }
 
-    // Close modal on Escape key
+    // modal закриття на esc
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             const modals = document.getElementsByClassName('modal');
@@ -995,23 +995,23 @@
         }
     });
 
-    // Set default dates to today
+    // сьогоднішня дата за замовчуванням
     function setDefaultDates() {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('settleDate').value = today;
         document.getElementById('paymentDate').value = today;
     }
 
-    // Initialize the application
+    // ініціалізація програми
     document.addEventListener('DOMContentLoaded', async function() {
         await updateStats();
         setDefaultDates();
 
-        // Set up periodic stats update (every 30 seconds)
+        // автоматичне оновлення статистики (30с)
         setInterval(updateStats, 30000);
     });
 
-    // Format currency for display
+    // валюта
     function formatCurrency(amount) {
         return new Intl.NumberFormat('uk-UA', {
             style: 'currency',
@@ -1020,19 +1020,19 @@
         }).format(amount);
     }
 
-    // Validate phone number format
+    // валідація номеру телефону
     function validatePhone(phone) {
         const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
         return phoneRegex.test(phone);
     }
 
-    // Validate passport format (Ukrainian passport)
+    // валідація номеру паспорта
     function validatePassport(passport) {
         const passportRegex = /^[A-Z]{2}[0-9]{6}$/;
         return passportRegex.test(passport);
     }
 
-    // Add validation to forms
+    // додавання валідації до форм
     document.getElementById('addStudentForm').addEventListener('input', function(e) {
         const target = e.target;
 
@@ -1060,7 +1060,7 @@
         }
     });
 
-    // Export data to CSV (bonus feature)
+    /*
     function exportToCSV(data, filename) {
         const csvContent = "data:text/csv;charset=utf-8,"
             + data.map(row => Object.values(row).join(",")).join("\n");
@@ -1073,8 +1073,8 @@
         link.click();
         document.body.removeChild(link);
     }
-
-    // Print functionality
+    */
+    // вивід
     function printTable(tableId) {
         const printWindow = window.open('', '', 'height=600,width=800');
         const table = document.getElementById(tableId);
@@ -1089,7 +1089,7 @@
         printWindow.print();
     }
 
-    // Auto-save form data (to prevent data loss)
+    // автозбереження форм
     function autoSaveFormData(formId) {
         const form = document.getElementById(formId);
         const inputs = form.querySelectorAll('input, select');
@@ -1107,7 +1107,7 @@
             });
         });
 
-        // Clear saved data on successful form submission
+        // автовидалення збереженних форм після підтвердження відправки
         form.addEventListener('submit', function() {
             inputs.forEach(input => {
                 localStorage.removeItem(`${formId}_${input.id}`);
@@ -1115,14 +1115,14 @@
         });
     }
 
-    // Initialize auto-save for all forms
+    // ініціалізація автозбереження для всіх форм
     document.addEventListener('DOMContentLoaded', function() {
         autoSaveFormData('addStudentForm');
         autoSaveFormData('settleStudentForm');
         autoSaveFormData('addPaymentForm');
     });
 
-    // Real-time search with debouncing
+    // пошук у реальному часі (debouncing)
     let searchTimeout;
     function debounceSearch(func, delay) {
         return function(...args) {
@@ -1131,10 +1131,10 @@
         };
     }
 
-    // Enhanced filter function with debouncing
+    // debouncing
     const debouncedFilterStudents = debounceSearch(filterStudents, 300);
 
-    // Update search event listener
+    // оновлення пошуку event listener
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('studentSearch');
         if (searchInput) {
@@ -1142,7 +1142,7 @@
         }
     });
 
-    // Add loading states to buttons
+    // стан завантаження (button)
     function setButtonLoading(buttonId, isLoading, originalText, loadingText) {
         const button = document.getElementById(buttonId);
         if (button) {
@@ -1151,7 +1151,7 @@
         }
     }
 
-    // Enhanced error handling with retry functionality
+    // обробка помилок із функцією повторної спроби
     async function apiCall(endpoint, options = {}) {
         try {
             const response = await fetch(`${API_BASE}${endpoint}`, {
@@ -1162,15 +1162,15 @@
                 ...options
             });
 
-            // First check if response is ok
+            // перевірка на відповідь
             if (!response.ok) {
-                // Try to parse as JSON, but handle cases where it's HTML
+                // JSON помилка
                 let errorMessage = 'Помилка сервера';
                 try {
                     const errorData = await response.json();
                     errorMessage = errorData.error || errorMessage;
                 } catch (parseError) {
-                    // If can't parse as JSON, it's likely HTML error page
+                    // HTML помилка
                     const htmlText = await response.text();
                     if (htmlText.includes('404') || response.status === 404) {
                         errorMessage = 'API endpoint не знайдено. Перевірте сервер.';
@@ -1183,7 +1183,7 @@
                 throw new Error(errorMessage);
             }
 
-            // Check if response is JSON
+            // перевірка відповіді по JSON
             const contentType = response.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
                 throw new Error('Сервер повернув неочікуваний формат даних');
@@ -1193,7 +1193,7 @@
         } catch (error) {
             console.error('API Error:', error);
 
-            // Handle network errors
+            // проблеми з підключенням
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
                 throw new Error('Не вдалося підключитися до сервера. Перевірте з\'єднання.');
             }
@@ -1202,7 +1202,7 @@
         }
     }
 
-    // Network status indicator
+    // індікатор статусу сервера
     function updateNetworkStatus() {
         const isOnline = navigator.onLine;
         const statusElement = document.getElementById('networkStatus');
@@ -1235,11 +1235,11 @@
         }
     }
 
-    // Listen for network status changes
+    // перевірка підключення
     window.addEventListener('online', updateNetworkStatus);
     window.addEventListener('offline', updateNetworkStatus);
 
-    // Initialize network status on load
+    // ініціалізація статусу підключення при завантаженні
     document.addEventListener('DOMContentLoaded', updateNetworkStatus);
 </script>
 </body>
