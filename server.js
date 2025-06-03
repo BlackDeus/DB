@@ -1,4 +1,4 @@
-// server.js - Node.js Express backend with MySQL connection
+// server.js - Node.js
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
@@ -10,9 +10,9 @@ const PORT = 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); // Serve static files
+app.use(express.static('public')); // статичні дані серверу
 
-// MySQL connection configuration
+// MySQL: конфігурація підключення
 const dbConfig = {
     host: '127.0.0.1',
     port: 3306,
@@ -22,10 +22,10 @@ const dbConfig = {
     charset: 'utf8mb4'
 };
 
-// Create connection pool
+// пул підключення
 const pool = mysql.createPool(dbConfig);
 
-// Initialize database connection
+// ініціалізація підключення БД
 async function initDatabase() {
     try {
         const connection = await pool.getConnection();
@@ -41,9 +41,9 @@ async function initDatabase() {
     }
 }
 
-// API Routes
+// API
 
-// Get all students
+// виклик студентів
 app.get('/api/students', async (req, res) => {
     try {
         const [rows] = await pool.execute('SELECT * FROM students ORDER BY student_id');
@@ -54,7 +54,7 @@ app.get('/api/students', async (req, res) => {
     }
 });
 
-// Add new student
+// додати студентів
 app.post('/api/students', async (req, res) => {
     try {
         const { name, birthDate, gender, phone, group, passport } = req.body;
@@ -75,7 +75,7 @@ app.post('/api/students', async (req, res) => {
     }
 });
 
-// Delete student
+// видалити студента
 app.delete('/api/students/:id', async (req, res) => {
     const connection = await pool.getConnection();
     try {
@@ -83,13 +83,13 @@ app.delete('/api/students/:id', async (req, res) => {
 
         const studentId = parseInt(req.params.id);
 
-        // Delete related settlements
+        // видалення прив'язане заселення
         await connection.execute('DELETE FROM settlements WHERE student_id = ?', [studentId]);
 
-        // Delete related payments
+        // видалити платежі
         await connection.execute('DELETE FROM payments WHERE student_id = ?', [studentId]);
 
-        // Delete student
+        // видалення студента
         const [result] = await connection.execute('DELETE FROM students WHERE student_id = ?', [studentId]);
 
         await connection.commit();
@@ -108,7 +108,7 @@ app.delete('/api/students/:id', async (req, res) => {
     }
 });
 
-// Get all rooms
+// виклик усіх кімнат
 app.get('/api/rooms', async (req, res) => {
     try {
         const [rows] = await pool.execute('SELECT * FROM rooms ORDER BY room_id');
@@ -119,7 +119,7 @@ app.get('/api/rooms', async (req, res) => {
     }
 });
 
-// Get available rooms
+// виклик вільних кімнат
 app.get('/api/rooms/available', async (req, res) => {
     try {
         const [rows] = await pool.execute(`
@@ -142,12 +142,12 @@ app.get('/api/rooms/available', async (req, res) => {
     }
 });
 
-// Add new settlement
+// заселення
 app.post('/api/settlements', async (req, res) => {
     try {
-        const { studentId, roomNumber, settleDate } = req.body; // Changed roomId to roomNumber
+        const { studentId, roomNumber, settleDate } = req.body;
 
-        // Check if student exists
+        // перевірка на існування студента
         const [studentCheck] = await pool.execute(
             'SELECT student_id FROM students WHERE student_id = ?',
             [studentId]
@@ -157,7 +157,7 @@ app.post('/api/settlements', async (req, res) => {
             return res.status(400).json({ error: 'Студента не знайдено' });
         }
 
-        // Check if student is already settled
+        // перевірка на заселення
         const [existingSettlement] = await pool.execute(
             'SELECT student_id FROM settlements WHERE student_id = ?',
             [studentId]
@@ -167,7 +167,7 @@ app.post('/api/settlements', async (req, res) => {
             return res.status(400).json({ error: 'Студент вже поселений в кімнаті' });
         }
 
-        // Find room by room_number and get room_id
+        // пошук кімнати за room_number та пошук room_id
         const [roomCheck] = await pool.execute(
             'SELECT room_id, capacity FROM rooms WHERE room_number = ?',
             [roomNumber]
@@ -180,7 +180,7 @@ app.post('/api/settlements', async (req, res) => {
         const roomId = roomCheck[0].room_id;
         const capacity = roomCheck[0].capacity;
 
-        // Check room capacity
+        // перевірка вмістимості кімнати
         const [occupantsCount] = await pool.execute(
             'SELECT COUNT(*) as count FROM settlements WHERE room_id = ?',
             [roomId]
@@ -190,7 +190,7 @@ app.post('/api/settlements', async (req, res) => {
             return res.status(400).json({ error: 'Кімната повністю зайнята' });
         }
 
-        // Insert new settlement using room_id (internal)
+        // додати нове поселення за room_id
         await pool.execute(
             'INSERT INTO settlements(student_id, room_id, settle_date) VALUES (?, ?, ?)',
             [studentId, roomId, settleDate]
@@ -200,7 +200,7 @@ app.post('/api/settlements', async (req, res) => {
     } catch (error) {
         console.error('Помилка поселення студента:', error);
 
-        // Handle specific MySQL errors
+        // catch помилок
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ error: 'Студент вже поселений або кімната зайнята' });
         }
@@ -213,7 +213,7 @@ app.post('/api/settlements', async (req, res) => {
     }
 });
 
-// Get all settlements - UPDATED to show room_number
+// виклик усіх заселень
 app.get('/api/settlements', async (req, res) => {
     try {
         const [rows] = await pool.execute(`
@@ -234,7 +234,7 @@ app.get('/api/settlements', async (req, res) => {
     }
 });
 
-// Evict student (remove settlement)
+// виселення
 app.delete('/api/settlements/student/:id', async (req, res) => {
     try {
         const studentId = parseInt(req.params.id);
@@ -252,7 +252,7 @@ app.delete('/api/settlements/student/:id', async (req, res) => {
     }
 });
 
-// Get all payments
+// виклик платежів
 app.get('/api/payments', async (req, res) => {
     try {
         const [rows] = await pool.execute('SELECT * FROM payments ORDER BY payment_date DESC');
@@ -263,7 +263,7 @@ app.get('/api/payments', async (req, res) => {
     }
 });
 
-// Get payments by student
+// пошук платежів по студенту
 app.get('/api/payments/student/:id', async (req, res) => {
     try {
         const studentId = parseInt(req.params.id);
@@ -278,7 +278,7 @@ app.get('/api/payments/student/:id', async (req, res) => {
     }
 });
 
-// Add new payment
+// додати платеж
 app.post('/api/payments', async (req, res) => {
     try {
         const { studentId, paymentDate, amount, paymentMethod } = req.body;
@@ -295,7 +295,7 @@ app.post('/api/payments', async (req, res) => {
     }
 });
 
-// Get statistics
+// статистика
 app.get('/api/statistics', async (req, res) => {
     try {
         const [studentsCount] = await pool.execute('SELECT COUNT(*) as count FROM students');
@@ -313,12 +313,12 @@ app.get('/api/statistics', async (req, res) => {
     }
 });
 
-// Serve the main HTML file
+// колбек сторінки
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start server
+// запуск сервера
 async function startServer() {  // <- was "sync function", should be "async function"
     await initDatabase();
     app.listen(PORT, () => {
@@ -327,12 +327,8 @@ async function startServer() {  // <- was "sync function", should be "async func
     });
 }
 
-// Fix 2: Add CORS middleware to handle cross-origin requests
-// Add this BEFORE your routes, after creating the app:
-
-
 app.use(cors({
-    origin: 'http://localhost:63342', // Allow requests from IntelliJ's server
+    origin: 'http://localhost:63342', // дозвіл реквестів від IntelliJ серверу
     credentials: true
 }));
 
